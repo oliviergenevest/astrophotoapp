@@ -1,0 +1,35 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import DashboardShell from '@/components/DashboardShell'
+import SignaturesList from '@/components/SignaturesList'
+import { createSupabaseServerClient } from '@/lib/supabase'
+
+const supabase = createSupabaseServerClient(Astro.cookies, Astro.request)
+const { data: { user } } = await supabase.auth.getUser()
+
+const { data: signatures } = await supabase
+  .from('signatures')
+  .select('id, signer_name, signer_email, signed_at, status, pdf_path')
+  .eq('photographer_id', user!.id)
+  .order('signed_at', { ascending: false })
+  .limit(20)
+
+// Génère une URL signée (1h) pour chaque PDF signé
+const signaturesWithUrls = await Promise.all(
+  (signatures ?? []).map(async (sig) => {
+    if (!sig.pdf_path) return { ...sig, signed_url: null }
+    const { data } = await supabase.storage
+      .from('signatures')
+      .createSignedUrl(sig.pdf_path, 3600)
+    return { ...sig, signed_url: data?.signedUrl ?? null }
+  })
+)
+
+const activeContract = null // sera récupéré dynamiquement
+---
+
+<Layout title="Dashboard – PhotoApp">
+  <DashboardShell user={user} activeContract={activeContract} client:load>
+    <SignaturesList signatures={signaturesWithUrls} client:load />
+  </DashboardShell>
+</Layout>

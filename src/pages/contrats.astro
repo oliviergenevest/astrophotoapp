@@ -1,0 +1,38 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import DashboardShell from '@/components/DashboardShell'
+import ContratsList from '@/components/ContratsList'
+import { createSupabaseServerClient } from '@/lib/supabase'
+
+const supabase = createSupabaseServerClient(Astro.cookies, Astro.request)
+const { data: { user } } = await supabase.auth.getUser()
+
+// Récupère les contrats
+const { data: contracts } = await supabase
+  .from('contracts')
+  .select('id, name, file_path, is_active, created_at')
+  .eq('photographer_id', user!.id)
+  .order('created_at', { ascending: false })
+
+// Génère une URL signée (1h) pour chaque contrat côté serveur
+const contractsWithUrls = await Promise.all(
+  (contracts ?? []).map(async (contract) => {
+    const { data } = await supabase.storage
+      .from('contracts')
+      .createSignedUrl(contract.file_path, 3600)
+    return { ...contract, signed_url: data?.signedUrl ?? null }
+  })
+)
+
+const activeContract = contractsWithUrls.find(c => c.is_active) ?? null
+---
+
+<Layout title="Mes contrats – PhotoApp">
+  <DashboardShell user={user} activeContract={activeContract} client:load>
+    <ContratsList
+      contracts={contractsWithUrls}
+      userId={user!.id}
+      client:load
+    />
+  </DashboardShell>
+</Layout>

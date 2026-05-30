@@ -1,0 +1,26 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import DashboardShell from '@/components/DashboardShell'
+import NouvelleSignatureForm from '@/components/NouvelleSignatureForm'
+import { createSupabaseServerClient } from '@/lib/supabase'
+
+const supabase = createSupabaseServerClient(Astro.cookies, Astro.request)
+const { data: { user } } = await supabase.auth.getUser()
+
+// Récupère le contrat actif
+const { data: activeContract } = await supabase
+  .from('contracts')
+  .select('id, name')
+  .eq('photographer_id', user!.id)
+  .eq('is_active', true)
+  .single()
+---
+
+<Layout title="Nouvelle signature – PhotoApp">
+  <DashboardShell user={user} activeContract={activeContract} client:load>
+    <NouvelleSignatureForm
+      activeContract={activeContract}
+      client:load
+    />
+  </DashboardShell>
+</Layout>
