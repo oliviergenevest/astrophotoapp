@@ -1,13 +1,10 @@
-import { createBrowserClient, createServerClient, parseCookieHeader } from '@supabase/ssr'
+import { createServerClient, parseCookieHeader } from '@supabase/ssr'
 import type { AstroCookies } from 'astro'
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 
-// ─── Client côté navigateur (React Islands) ───
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
-
-// ─── Client côté serveur (pages Astro + middleware) ───
+// ─── Client côté serveur uniquement ───
 export function createSupabaseServerClient(cookies: AstroCookies, request: Request) {
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {

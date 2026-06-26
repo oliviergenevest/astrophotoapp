@@ -1,39 +1,79 @@
 import { Button } from '@/components/ui/button'
-import { supabase } from '@/lib/supabase'
+
 
 interface Props {
   user: { email?: string } | null
   activeContract: { id: string; name: string } | null
+  currentPath: string   // ← ajout
   children: React.ReactNode
 }
 
-export default function DashboardShell({ user, activeContract, children }: Props) {
+export default function DashboardShell({ user, activeContract, currentPath, children }: Props) {
 
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
-  }
+async function handleLogout() {
+  await fetch('/api/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  })
+  window.location.href = '/login'
+}
 
   return (
     <div className="min-h-screen bg-slate-50">
 
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-800">PhotoApp</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-500 hidden sm:block">
-              {user?.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-slate-500 hover:text-slate-800 transition-colors"
-            >
-              Déconnexion
-            </button>
-          </div>
-        </div>
-      </header>
+
+<header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10">
+  <div className="max-w-5xl mx-auto flex items-center justify-between">
+
+    {/* Logo cliquable → dashboard */}
+    <a
+      href="/dashboard"
+      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+    >
+      <span className="text-2xl">📷</span>
+      <span className="text-xl font-bold text-slate-800">PhotoApp</span>
+    </a>
+
+    {/* Navigation centrale */}
+    <nav className="hidden sm:flex items-center gap-1">
+      <a
+        href="/dashboard"
+        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+          ${currentPath === '/dashboard'
+            ? 'bg-slate-100 text-slate-900'
+            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+          }`}
+      >
+        Signatures
+      </a>
+      <a
+        href="/contrats"
+        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+          ${currentPath === '/contrats'
+            ? 'bg-slate-100 text-slate-900'
+            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+          }`}
+      >
+        Contrats
+      </a>
+    </nav>
+
+    {/* Droite : email + déconnexion */}
+    <div className="flex items-center gap-4">
+      <span className="text-sm text-slate-500 hidden sm:block truncate max-w-[160px]">
+        {user?.email}
+      </span>
+      <button
+        onClick={handleLogout}
+        className="text-sm text-slate-500 hover:text-slate-800 transition-colors"
+      >
+        Déconnexion
+      </button>
+    </div>
+
+  </div>
+</header>
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
 
@@ -71,9 +111,7 @@ export default function DashboardShell({ user, activeContract, children }: Props
 
         {/* Liste des signatures */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="font-semibold text-slate-800">Dernières signatures</h2>
-          </div>
+          
           {children}
         </div>
 

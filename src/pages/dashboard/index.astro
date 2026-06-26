@@ -7,29 +7,26 @@ import { createSupabaseServerClient } from '@/lib/supabase'
 const supabase = createSupabaseServerClient(Astro.cookies, Astro.request)
 const { data: { user } } = await supabase.auth.getUser()
 
-const { data: signatures } = await supabase
-  .from('signatures')
-  .select('id, signer_name, signer_email, signed_at, status, pdf_path')
+const { data: activeContract } = await supabase
+  .from('contracts')
+  .select('id, name')
   .eq('photographer_id', user!.id)
-  .order('signed_at', { ascending: false })
-  .limit(20)
-
-// Génère une URL signée (1h) pour chaque PDF signé
-const signaturesWithUrls = await Promise.all(
-  (signatures ?? []).map(async (sig) => {
-    if (!sig.pdf_path) return { ...sig, signed_url: null }
-    const { data } = await supabase.storage
-      .from('signatures')
-      .createSignedUrl(sig.pdf_path, 3600)
-    return { ...sig, signed_url: data?.signedUrl ?? null }
-  })
-)
-
-const activeContract = null // sera récupéré dynamiquement
+  .eq('is_active', true)
+  .single()
 ---
 
 <Layout title="Dashboard – PhotoApp">
-  <DashboardShell user={user} activeContract={activeContract} client:load>
-    <SignaturesList signatures={signaturesWithUrls} client:load />
+  <DashboardShell
+    user={user}
+    activeContract={activeContract}
+    currentPath="/dashboard"
+    client:load
+  >
+    <div>
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="font-semibold text-slate-800">Dernières signatures</h2>
+      </div>
+      <SignaturesList client:load />
+    </div>
   </DashboardShell>
 </Layout>

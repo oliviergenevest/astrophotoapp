@@ -204,55 +204,55 @@ if (step === 'success') {
   )
 }
 
-  // ─── LECTURE DU CONTRAT ───
-  if (step === 'contract') {
-    return (
-      <div className="h-screen flex flex-col">
+// ─── LECTURE DU CONTRAT ───
+if (step === 'contract') {
+  return (
+    <div className="h-screen flex flex-col">
 
-        {/* Header */}
-        <div className="bg-slate-800 text-white px-4 py-3 flex items-center gap-3 shrink-0">
-          <span className="text-xl">📄</span>
-          <div>
-            <p className="text-xs text-slate-400">Autorisation de droit à l'image</p>
-            <p className="text-sm font-medium">{contractName}</p>
-          </div>
+      {/* Header */}
+      <div className="bg-slate-800 text-white px-4 py-3 flex items-center gap-3 shrink-0">
+        <span className="text-xl">📄</span>
+        <div>
+          <p className="text-xs text-slate-400">Autorisation de droit à l'image</p>
+          <p className="text-sm font-medium truncate">{contractName}</p>
         </div>
-
-        {/* Bonjour signataire */}
-        <div className="bg-blue-50 border-b border-blue-100 px-4 py-3 shrink-0">
-          <p className="text-sm text-blue-800">
-            Bonjour <strong>{signerName}</strong>, veuillez lire attentivement le document ci-dessous avant de signer.
-          </p>
-        </div>
-
-        {/* PDF iframe */}
-        <div className="flex-1 overflow-hidden">
-          {contractUrl ? (
-            <iframe
-              src={contractUrl}
-              className="w-full h-full border-0"
-              title="Contrat à signer"
-            />
-          ) : (
-            <div className="h-full flex items-center justify-center text-slate-400">
-              <p>Impossible de charger le contrat.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Bouton continuer */}
-        <div className="p-4 border-t border-slate-200 bg-white shrink-0">
-          <Button
-            className="w-full h-12 text-base"
-            onClick={() => setStep('sign')}
-          >
-            J'ai lu le document → Signer
-          </Button>
-        </div>
-
       </div>
-    )
-  }
+
+      {/* Bonjour signataire */}
+      <div className="bg-blue-50 border-b border-blue-100 px-4 py-2 shrink-0">
+        <p className="text-sm text-blue-800">
+          Bonjour <strong>{signerName}</strong>, veuillez lire le document ci-dessous.
+        </p>
+      </div>
+
+      {/* Bouton VISIBLE en haut sur mobile */}
+      <div className="px-4 py-3 bg-white border-b border-slate-200 shrink-0">
+        <Button
+          className="w-full h-11"
+          onClick={() => setStep('sign')}
+        >
+          J'ai lu le document → Signer
+        </Button>
+      </div>
+
+      {/* PDF iframe — prend le reste */}
+      <div className="flex-1 overflow-hidden">
+        {contractUrl ? (
+          <iframe
+            src={contractUrl}
+            className="w-full h-full border-0"
+            title="Contrat à signer"
+          />
+        ) : (
+          <div className="h-full flex items-center justify-center text-slate-400">
+            <p>Impossible de charger le contrat.</p>
+          </div>
+        )}
+      </div>
+
+    </div>
+  )
+}
 
   // ─── PAD DE SIGNATURE ───
   return (

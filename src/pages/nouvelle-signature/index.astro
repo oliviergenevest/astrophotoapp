@@ -17,7 +17,7 @@ const { data: activeContract } = await supabase
 ---
 
 <Layout title="Nouvelle signature – PhotoApp">
-  <DashboardShell user={user} activeContract={activeContract} client:load>
+  <DashboardShell currentPath="/nouvelle-signature" user={user} activeContract={activeContract} client:load>
     <NouvelleSignatureForm
       activeContract={activeContract}
       client:load

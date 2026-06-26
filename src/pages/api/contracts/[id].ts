@@ -1,8 +1,15 @@
 import type { APIRoute } from 'astro'
 import { createSupabaseServerClient } from '@/lib/supabase'
+import { checkOrigin } from '@/lib/csrf'
 
 // PATCH — activer un contrat
 export const PATCH: APIRoute = async ({ cookies, request, params }) => {
+  if (!checkOrigin(request)) {
+    return new Response(
+      JSON.stringify({ error: 'Origine non autorisée' }),
+      { status: 403 }
+    )
+  }
   const supabase = createSupabaseServerClient(cookies, request)
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -32,8 +39,16 @@ export const PATCH: APIRoute = async ({ cookies, request, params }) => {
   return new Response(JSON.stringify({ success: true }), { status: 200 })
 }
 
+
+
 // DELETE — supprimer un contrat
 export const DELETE: APIRoute = async ({ cookies, request, params }) => {
+  if (!checkOrigin(request)) {
+    return new Response(
+      JSON.stringify({ error: 'Origine non autorisée' }),
+      { status: 403 }
+    )
+  }
   const supabase = createSupabaseServerClient(cookies, request)
   const { data: { user } } = await supabase.auth.getUser()
 
