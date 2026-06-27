@@ -19,7 +19,3 @@
   [headers.values]
     X-Robots-Tag = "noindex"
 
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/entry"
-  status = "200"
