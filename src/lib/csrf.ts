@@ -8,5 +8,7 @@ export function checkOrigin(request: Request): boolean {
 
   // En production on vérifie l'origine
   if (!origin || !siteUrl) return false
-  return origin === siteUrl
+  // Retire le slash final des deux côtés avant de comparer
+  return origin.replace(/\/$/, '') === siteUrl.replace(/\/$/, '')
+
 }
