@@ -57,7 +57,8 @@ export const PATCH: APIRoute = async ({ cookies, request, params }) => {
       }
 
       // Upload du nouveau fichier
-      const newFilePath = `${user.id}/${Date.now()}_${file.name}`
+      const safeName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '')
+      const newFilePath = `${user.id}/${Date.now()}_${safeName}`
       const { error: uploadError } = await supabaseAdmin.storage
         .from('contracts')
         .upload(newFilePath, file)

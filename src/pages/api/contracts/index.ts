@@ -54,7 +54,8 @@ export const POST: APIRoute = async ({ cookies, request }) => {
 
    // console.log('Count contrats existants:', count)
 
-    const filePath = `${user.id}/${Date.now()}_${file.name}`
+    const safeName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '')
+    const filePath = `${user.id}/${Date.now()}_${safeName}`
    // console.log('File path:', filePath)
 
     const { error: uploadError } = await supabase.storage
