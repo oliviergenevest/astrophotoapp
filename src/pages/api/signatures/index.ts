@@ -118,7 +118,7 @@ export const GET: APIRoute = async ({ cookies, request }) => {
     // Requête de base
     let query = supabase
       .from('signatures')
-      .select('id, signer_name, signer_email, signed_at, status, pdf_path, contract_name, contracts(name)', { count: 'exact' })
+      .select('id, signer_name, signer_email, signer_phone, signed_at, status, pdf_path, contract_name, contracts(name)', { count: 'exact' })
       .eq('photographer_id', user.id)
       .order('signed_at', { ascending: false })
 

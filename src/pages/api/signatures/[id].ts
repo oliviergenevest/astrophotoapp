@@ -70,7 +70,7 @@ export const PATCH: APIRoute = async ({ request, params }) => {
     const { data: existingRaw, error: findError } = await supabaseAdmin
       .from('signatures')
       .select(`
-        id, status, signer_name, signer_email, signed_at,
+        id, status, signer_name, signer_email, signer_phone, signed_at,
         photo_path, ip_address,
         contracts(file_path, name),
         photographer_id
@@ -209,6 +209,10 @@ if (existing.photo_path) {
     drawField('PHOTOGRAPHE', photographerEmail, yPos); yPos -= 40
     drawField('SIGNATAIRE', existing.signer_name, yPos); yPos -= 40
     drawField('EMAIL', existing.signer_email, yPos); yPos -= 40
+    // ← ajout téléphone conditionnel
+    if (existing.signer_phone) {
+      drawField('TÉLÉPHONE', existing.signer_phone, yPos); yPos -= 40
+    }
     drawField('DATE DE SIGNATURE', dateStr, yPos); yPos -= 40
     drawField('ADRESSE IP', existing.ip_address ?? 'non disponible', yPos); yPos -= 40
     drawField('RÉFÉRENCE', existing.id, yPos); yPos -= 50

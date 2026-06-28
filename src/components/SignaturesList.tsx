@@ -9,6 +9,7 @@ interface Signature {
   id: string
   signer_name: string
   signer_email: string
+  signer_phone: string | null  // ← ajout
   signed_at: string
   status: string
   signed_url: string | null
@@ -183,7 +184,10 @@ export default function SignaturesList() {
               {/* Infos signataire */}
               <div className="min-w-0">
                 <p className="font-medium text-slate-800 truncate">{sig.signer_name}</p>
-                <p className="text-sm text-slate-400 truncate">{sig.signer_email}</p>
+                <p className="text-sm text-slate-400 truncate">✉ {sig.signer_email}</p>
+                 {sig.signer_phone && (
+                  <p className="text-sm text-slate-400 truncate">📞 {sig.signer_phone}</p>
+                )}
                 {(sig.contract_name ?? sig.contracts?.[0]?.name) && (
                   <p className="text-xs text-blue-500 truncate mt-0.5">
                     📄 {sig.contract_name ?? sig.contracts?.[0]?.name}
