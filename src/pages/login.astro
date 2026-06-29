@@ -1,5 +1,5 @@
 ---
-import Layout from '@/layouts/Layout.astro'
+import '@/styles/global.css'
 import LoginForm from '@/components/LoginForm'
 import { createSupabaseServerClient } from '@/lib/supabase'
 
@@ -8,16 +8,34 @@ const { data: { user } } = await supabase.auth.getUser()
 if (user) return Astro.redirect('/dashboard')
 ---
 
-<Layout title="Connexion – PhotoApp">
-  <div class="min-h-screen flex items-center justify-center bg-slate-50">
-    <div class="w-full max-w-md px-6">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-slate-800">PhotoApp</h1>
-        <p class="text-slate-500 mt-2">Droit à l'image – Signature électronique</p>
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion – Signa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body style="background:#0F1923; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem;">
+
+    <div style="width:100%; max-width:420px;">
+
+      <!-- Logo -->
+      <div style="text-align:center; margin-bottom:2rem;">
+        <h1 style="font-family:'Syne',sans-serif; font-size:2rem; font-weight:700; color:#C9A84C; letter-spacing:0.05em;">
+          Signa
+        </h1>
+        <p style="font-size:0.875rem; color:rgba(245,240,232,0.4); margin-top:0.25rem;">
+          Signature électronique du droit à l'image
+        </p>
       </div>
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+
+      <!-- Card -->
+      <div style="background:#1A2733; border-radius:1rem; padding:2rem; border:0.5px solid rgba(201,168,76,0.2);">
         <LoginForm client:load />
       </div>
+
     </div>
-  </div>
-</Layout>
+
+  </body>
+</html>

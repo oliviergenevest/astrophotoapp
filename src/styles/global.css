@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
 
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -81,6 +83,17 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+}
+
+:root {
+  --signa-night: #0F1923;
+  --signa-night-2: #1A2733;
+  --signa-gold: #C9A84C;
+  --signa-lime: #AAFF00;
+  --signa-cream: #F5F0E8;
+  --signa-danger: #FF4D6D;
+  --signa-warning: #FFB830;
+  --signa-neutral: #334155;
 }
 
 .dark {

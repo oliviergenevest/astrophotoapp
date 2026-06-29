@@ -15,18 +15,70 @@ const { data: activeContract } = await supabase
   .single()
 ---
 
-<Layout title="Dashboard – PhotoApp">
+<Layout title="Dashboard – Signa">
   <DashboardShell
     user={user}
     activeContract={activeContract}
     currentPath="/dashboard"
     client:load
   >
-    <div>
-      <div class="px-6 py-4 border-b border-slate-100">
-        <h2 class="font-semibold text-slate-800">Dernières signatures</h2>
+    <div class="space-y-6">
+
+      <!-- Cards d'action — visibles sur desktop, cachées sur mobile (bottom nav) -->
+      <div class="hidden sm:grid grid-cols-2 gap-4">
+
+        <!-- Nouvelle signature -->
+        <a href="/nouvelle-signature">
+          <div
+            class="rounded-xl p-5 cursor-pointer hover:opacity-90 transition-opacity"
+            style="background:#AAFF00;"
+          >
+            <div class="text-2xl mb-3">✍️</div>
+            <p style="font-family:'Syne',sans-serif; font-size:1rem; font-weight:600; color:#0F1923;">
+              Nouvelle signature
+            </p>
+            <p style="font-size:0.75rem; color:rgba(15,25,35,0.6); margin-top:0.25rem;">
+              Faire signer un droit à l'image
+            </p>
+          </div>
+        </a>
+
+        <!-- Mes contrats -->
+        <a href="/contrats">
+          <div
+            class="rounded-xl p-5 cursor-pointer hover:opacity-90 transition-opacity"
+            style="background:#1A2733; border:0.5px solid rgba(201,168,76,0.2);"
+          >
+            <div class="text-2xl mb-3">📄</div>
+            <p style="font-family:'Syne',sans-serif; font-size:1rem; font-weight:600; color:#F5F0E8;">
+              Mes contrats
+            </p>
+            <p style="font-size:0.75rem; color:#C9A84C; margin-top:0.25rem;">
+              {activeContract ? activeContract.name : 'Aucun contrat actif'}
+            </p>
+          </div>
+        </a>
+
       </div>
-      <SignaturesList client:load />
+
+      <!-- Liste des signatures -->
+      <div
+        class="rounded-xl overflow-hidden"
+        style="background:#1A2733; border:0.5px solid rgba(201,168,76,0.15);"
+      >
+        <div
+          class="px-6 py-4"
+          style="border-bottom:0.5px solid rgba(255,255,255,0.05);"
+        >
+          <h2
+            style="font-family:'Syne',sans-serif; font-size:0.9375rem; font-weight:600; color:#F5F0E8;"
+          >
+            Dernières signatures
+          </h2>
+        </div>
+        <SignaturesList client:load />
+      </div>
+
     </div>
   </DashboardShell>
 </Layout>
