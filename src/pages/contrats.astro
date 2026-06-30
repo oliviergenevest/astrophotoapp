@@ -27,14 +27,15 @@ const contractsWithUrls = await Promise.all(
 const activeContract = contractsWithUrls.find(c => c.is_active) ?? null
 ---
 
-<Layout title="Mes contrats – PhotoApp">
+<Layout title="Mes contrats – Signa">
   <DashboardShell currentPath="/contrats" user={user} activeContract={activeContract} client:load>
-  <div>
-    <div class="px-6 py-4 border-b border-slate-100">
-      <h2 class="font-semibold text-slate-800">Mes contrats</h2>
+    <div class="rounded-xl overflow-hidden bg-signa-night-2 border-[0.5px] border-signa-gold/15">
+      <div class="px-6 py-4 border-b-[0.5px] border-white/5">
+        <h2 class="font-syne text-[0.9375rem] font-semibold text-signa-cream">
+          Mes contrats
+        </h2>
+      </div>
+      <ContratsList contracts={contractsWithUrls} userId={user!.id} client:load />
     </div>
-    <ContratsList contracts={contractsWithUrls} userId={user!.id} client:load />
-  </div>
-</DashboardShell>
-
+  </DashboardShell>
 </Layout>

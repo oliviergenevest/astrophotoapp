@@ -1,20 +1,134 @@
 ---
-import Layout from "@/layouts/Layout.astro"
+import Layout from '@/layouts/Layout.astro'
+import {
+  Sparkles,
+  Signature,
+  FileCheck,
+  MailCheck,
+  ShieldCheck,
+  Smartphone,
+  Folder,
+} from 'lucide-react'
 ---
 
-<html lang="fr">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro PHOTO APP</title>
-	</head>
-	<body>
-		
-		<h1 class="">Astro PHOTO APP</h1>
-		<a href="./dashboard">Dashboard</a>
-	
-	</body>
-</html>
+<Layout title="Signa – La signature du droit à l'image, simplifiée">
+  <div class="bg-signa-night">
+
+    <!-- Hero -->
+    <section class="px-8 pt-20 pb-16 text-center max-w-[680px] mx-auto">
+      <div class="inline-flex items-center gap-1.5 bg-signa-lime/10 border-[0.5px] border-signa-lime/25 text-signa-lime text-xs font-medium px-3.5 py-1.5 rounded-full mb-6">
+        <Sparkles className="w-3.5 h-3.5" />
+        Pour les photographes professionnels
+      </div>
+
+      <h1 class="font-syne font-bold text-[42px] leading-[1.15] text-signa-cream mb-5">
+        La signature du droit à l'image, <span class="text-signa-lime">en quelques secondes</span>
+      </h1>
+
+      <p class="text-base text-signa-cream/60 leading-relaxed max-w-[480px] mx-auto mb-9">
+        Signa simplifie la collecte des autorisations de droit à l'image.
+        Vos modèles signent sur place, vous recevez le contrat signé instantanément.
+      </p>
+
+      <div class="flex gap-3 justify-center flex-wrap">
+        <a href="/dashboard">
+          <button class="font-syne font-semibold text-sm px-[26px] py-3.5 rounded-[10px] bg-signa-lime text-signa-night hover:brightness-95 transition-all">
+            Commencer gratuitement
+          </button>
+        </a>
+        <button class="font-medium text-sm px-[26px] py-3.5 rounded-[10px] bg-white text-slate-600 border border-slate-300 hover:bg-slate-50 transition-colors">
+          Voir une démo
+        </button>
+      </div>
+    </section>
+
+    <!-- Fonctionnalités -->
+    <section class="px-8 pt-12 pb-20 max-w-[920px] mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="font-syne font-bold text-[26px] text-signa-cream mb-2">
+          Tout ce qu'il vous faut
+        </h2>
+        <p class="text-sm text-slate-500">
+          Une solution pensée pour le terrain
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-lime/[0.12] text-signa-lime">
+            <Signature className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            Signature instantanée
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Faites signer vos modèles directement sur place, sans papier ni stylo.
+          </p>
+        </div>
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-gold/15 text-signa-gold">
+            <FileCheck className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            Contrats personnalisés
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Importez vos propres modèles de contrat et adaptez-les à chaque shooting.
+          </p>
+        </div>
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-lime/[0.12] text-signa-lime">
+            <MailCheck className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            Envoi automatique
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Le PDF signé est envoyé instantanément par email au modèle et à vous-même.
+          </p>
+        </div>
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-gold/15 text-signa-gold">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            Valeur juridique
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Signature électronique conforme, horodatée et archivée en toute sécurité.
+          </p>
+        </div>
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-lime/[0.12] text-signa-lime">
+            <Smartphone className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            100% mobile
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Conçu pour être utilisé sur le terrain, directement depuis votre téléphone.
+          </p>
+        </div>
+
+        <div class="bg-signa-night-2 border-[0.5px] border-signa-neutral rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 bg-signa-gold/15 text-signa-gold">
+            <Folder className="w-5 h-5" />
+          </div>
+          <h3 class="font-syne font-semibold text-[15px] text-signa-cream mb-2">
+            Archive centralisée
+          </h3>
+          <p class="text-[13px] text-signa-cream/50 leading-relaxed">
+            Retrouvez tous vos contrats signés au même endroit, à tout moment.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</Layout>

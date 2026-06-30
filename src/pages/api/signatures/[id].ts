@@ -325,27 +325,106 @@ if (existing.photo_path) {
       const fileName = `contrat_signe_${existing.signer_name.replace(/\s+/g, '_')}.pdf`
 
       // Email au signataire
-      await resend.emails.send({
-        from: import.meta.env.RESEND_FROM_EMAIL,
-        to: existing.signer_email,
-        subject: `Votre autorisation de droit à l'image – ${contract.name}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1e3a5f;">Autorisation de droit à l'image</h2>
-            <p>Bonjour <strong>${existing.signer_name}</strong>,</p>
-            <p>Votre autorisation de droit à l'image a bien été enregistrée le <strong>${dateStr}</strong>.</p>
-            <p>Vous trouverez le document signé en pièce jointe.</p>
-            <p style="color: #666; font-size: 12px; margin-top: 32px;">
-              Référence : ${id}<br/>
-              Ce document a valeur contractuelle.
+     // Email au signataire
+await resend.emails.send({
+  from: import.meta.env.RESEND_FROM_EMAIL,
+  to: existing.signer_email,
+  subject: `Votre autorisation de droit à l'image – ${contract.name}`,
+  html: `
+    <div style="background:#0F1923; padding:40px 16px; font-family:'DM Sans', Arial, sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; margin:0 auto; background:#1A2733; border-radius:12px; overflow:hidden; border:0.5px solid #334155;">
+ 
+        <tr>
+          <td style="padding:28px 32px; background:#0F1923; border-bottom:0.5px solid #334155;">
+            <span style="font-family:'Syne', Arial, sans-serif; font-weight:700; font-size:20px; color:#F5F0E8;">
+              Signa
+            </span>
+          </td>
+        </tr>
+ 
+        <tr>
+          <td style="padding:40px 32px 24px; text-align:center;">
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 20px;">
+              <tr>
+                <td style="width:64px; height:64px; border-radius:50%; background:rgba(170,255,0,0.1); text-align:center; vertical-align:middle;">
+                  <span style="font-size:28px; color:#AAFF00; line-height:64px;">&#10003;</span>
+                </td>
+              </tr>
+            </table>
+            <p style="font-family:'Syne', Arial, sans-serif; font-weight:700; font-size:22px; color:#F5F0E8; margin:0 0 8px;">
+              Signature enregistrée
             </p>
-          </div>
-        `,
-        attachments: [{
-          filename: fileName,
-          content: pdfBase64,
-        }]
-      })
+            <p style="font-family:'DM Sans', Arial, sans-serif; font-size:14px; color:#8A9BAB; margin:0; line-height:1.6;">
+              Bonjour ${existing.signer_name}, merci d'avoir signé votre autorisation de droit à l'image.
+            </p>
+          </td>
+        </tr>
+ 
+        <tr>
+          <td style="padding:0 32px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:rgba(201,168,76,0.06); border:0.5px solid rgba(201,168,76,0.2); border-radius:10px;">
+              <tr>
+                <td style="padding:18px 20px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="font-family:'DM Sans', Arial, sans-serif; font-size:12px; color:#C9A84C; padding-bottom:4px;">Contrat</td>
+                    </tr>
+                    <tr>
+                      <td style="font-family:'Syne', Arial, sans-serif; font-size:14px; font-weight:600; color:#F5F0E8; padding-bottom:14px;">${contract.name}</td>
+                    </tr>
+                    <tr>
+                      <td style="border-top:0.5px solid rgba(201,168,76,0.15); padding-top:14px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td style="font-family:'DM Sans', Arial, sans-serif; font-size:12px; color:#C9A84C; padding-bottom:4px;">Signé le</td>
+                          </tr>
+                          <tr>
+                            <td style="font-family:'DM Sans', Arial, sans-serif; font-size:13px; color:#F5F0E8;">${dateStr}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+ 
+        <tr>
+          <td style="padding:0 32px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:rgba(245,240,232,0.04); border:0.5px solid rgba(245,240,232,0.08); border-radius:10px;">
+              <tr>
+                <td style="padding:14px 18px; text-align:center;">
+                  <span style="font-family:'DM Sans', Arial, sans-serif; font-size:13px; color:#C8D4DD;">
+                    Le document signé est joint à cet email
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+ 
+        <tr>
+          <td style="padding:20px 32px 28px; border-top:0.5px solid #334155;">
+            <p style="font-family:'DM Sans', Arial, sans-serif; font-size:11px; color:#5C6B7A; margin:0 0 8px; line-height:1.7; text-align:center;">
+              Référence : ${id}
+            </p>
+            <p style="font-family:'DM Sans', Arial, sans-serif; font-size:11px; color:#5C6B7A; margin:0; line-height:1.7; text-align:center;">
+              Cet email a été envoyé par Signa au nom du photographe.<br>
+              Conservez ce document, il fait foi de votre consentement.
+            </p>
+          </td>
+        </tr>
+ 
+      </table>
+    </div>
+  `,
+  attachments: [{
+    filename: fileName,
+    content: pdfBase64,
+  }]
+})
 
       // Email au photographe
       if (photographerEmail) {

@@ -48,6 +48,17 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --color-signa-night: var(--signa-night);
+  --color-signa-night-2: var(--signa-night-2);
+  --color-signa-gold: var(--signa-gold);
+  --color-signa-lime: var(--signa-lime);
+  --color-signa-cream: var(--signa-cream);
+  --color-signa-danger: var(--signa-danger);
+  --color-signa-warning: var(--signa-warning);
+  --color-signa-neutral: var(--signa-neutral);
+ 
+  --font-syne: 'Syne', sans-serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
 }
 
 :root {
@@ -140,4 +151,16 @@
   html {
     @apply font-sans;
     }
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled),
+a,
+label[for],
+input[type="file"] {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
