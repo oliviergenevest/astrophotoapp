@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ cookies, request, params }) => {
 
     const { data: signature, error } = await supabase
       .from('signatures')
-      .select('id, signer_name, status, contracts(file_path, name)')
+      .select('id, signer_name, status, signature_mode, otp_verified_at, contracts(file_path, name)')
       .eq('id', id)
       .single()
 
@@ -36,6 +36,8 @@ export const GET: APIRoute = async ({ cookies, request, params }) => {
       signer_name: signature.signer_name,
       contract_name: contract.name,
       contract_url: signed?.signedUrl ?? null,
+      signature_mode: signature.signature_mode ?? 'kiosque',
+      otp_verified: !!signature.otp_verified_at,
     }), { status: 200 })
 
   } catch (err: any) {
