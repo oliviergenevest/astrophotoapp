@@ -7,12 +7,19 @@ import sharp from 'sharp'
 import { checkOrigin } from '@/lib/csrf'
 
 // GET — récupère les données de la signature + URL signée du contrat
+
+
 export const GET: APIRoute = async ({ cookies, request, params }) => {
   try {
-    const supabase = createSupabaseServerClient(cookies, request)
     const { id } = params
 
-    const { data: signature, error } = await supabase
+    // Service role pour bypasser le RLS — la page kiosque est publique
+    const supabaseAdmin = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.SUPABASE_SERVICE_ROLE_KEY
+    )
+
+    const { data: signature, error } = await supabaseAdmin
       .from('signatures')
       .select('id, signer_name, status, signature_mode, otp_verified_at, contracts(file_path, name)')
       .eq('id', id)
@@ -27,7 +34,9 @@ export const GET: APIRoute = async ({ cookies, request, params }) => {
     }
 
     const contract = signature.contracts as any
-    const { data: signed } = await supabase.storage
+
+    // URL signée — aussi via admin pour bypasser RLS
+    const { data: signed } = await supabaseAdmin.storage
       .from('contracts')
       .createSignedUrl(contract.file_path, 3600)
 
