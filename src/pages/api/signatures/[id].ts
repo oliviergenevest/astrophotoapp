@@ -293,7 +293,7 @@ if (existing.photo_path) {
     })
 
     signaturePage.drawText(
-      'Ce document a valeur contractuelle. Généré automatiquement par PhotoApp.',
+      'Ce document a valeur contractuelle. Généré automatiquement par Crespeau Photo.',
       { x: 50, y: 38, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
     )
 
@@ -432,7 +432,7 @@ page1.drawLine({
   color: rgb(0.85, 0.85, 0.85),
 })
 page1.drawText(
-  'Ce document a valeur contractuelle. Généré automatiquement par Signa.',
+  'Ce document a valeur contractuelle. Généré automatiquement par Crespeau Photo.',
   { x: 50, y: 38, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
 )
 page1.drawText(
@@ -537,7 +537,7 @@ lastPage.drawLine({
   color: rgb(0.85, 0.85, 0.85),
 })
 lastPage.drawText(
-  'Ce document a valeur contractuelle. Généré automatiquement par Signa.',
+  'Ce document a valeur contractuelle. Généré automatiquement par Crespeau Photo.',
   { x: 50, y: 38, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
 )
 lastPage.drawText(
