@@ -666,7 +666,7 @@ await resend.emails.send({
               Référence : ${id}
             </p>
             <p style="font-family:'DM Sans', Arial, sans-serif; font-size:11px; color:#5C6B7A; margin:0; line-height:1.7; text-align:center;">
-              Cet email a été envoyé par Signa au nom du photographe.<br>
+              Cet email a été envoyé par Crespeau Photo au nom du photographe.<br>
               Conservez ce document, il fait foi de votre consentement.
             </p>
           </td>

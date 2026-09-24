@@ -121,7 +121,7 @@ export const POST: APIRoute = async ({ cookies, request, params }) => {
               <td style="padding:20px 32px 28px; border-top:0.5px solid #334155;">
                 <p style="font-family:'DM Sans', Arial, sans-serif; font-size:11px; color:#5C6B7A; margin:0; line-height:1.7; text-align:center;">
                   Ce lien est personnel et sécurisé. Ne le partagez pas.<br>
-                  Envoyé par Signa au nom du photographe.
+                  Envoyé par Crespeau Photo au nom du photographe.
                 </p>
               </td>
             </tr>

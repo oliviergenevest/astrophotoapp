@@ -34,7 +34,7 @@ export default function DashboardShell({ user, activeContract, currentPath, chil
           style={{ fontFamily: 'Syne, sans-serif', color: '#C9A84C' }}
           className="text-xl font-bold tracking-wide hover:opacity-80 transition-opacity"
         >
-          Signa
+          CRESPEAU PHOTO
         </a>
 
         {/* Nav centrale */}
