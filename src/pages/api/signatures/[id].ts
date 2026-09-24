@@ -121,8 +121,8 @@ const signaturePath = `${id}/signature_${Date.now()}.png`
 
     if (uploadError) throw new Error('Upload signature: ' + uploadError.message)
 
-    // ─── 2. Génération du PDF signé ──────────────────────────────────
-    const contract = existing.contracts as any
+    // ─── 2. Génération du PDF signé (ancienne presentation)──────────────────────────────────
+  /*  const contract = existing.contracts as any
 
     // Télécharge le PDF original
     const { data: contractFile } = await supabaseAdmin.storage
@@ -173,7 +173,8 @@ if (existing.photo_path) {
     const signedAt = new Date()
     const dateStr = signedAt.toLocaleDateString('fr-FR', {
       weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'Europe/Paris' 
     })
 
     // Récupère le nom du photographe
@@ -307,6 +308,249 @@ if (existing.photo_path) {
   addDefaultPage: false,
 })
     const pdfBuffer = Buffer.from(pdfBytes)
+*/
+
+// ─── 2. Génération du PDF signé (nouvelle présentation) ──────────────────────────────────
+
+const contract = existing.contracts as any
+
+// Télécharge le PDF original
+const { data: contractFile } = await supabaseAdmin.storage
+  .from('contracts')
+  .download(contract.file_path)
+
+if (!contractFile) throw new Error('Impossible de télécharger le contrat PDF')
+
+const contractBuffer = await contractFile.arrayBuffer()
+const originalPdf = await PDFDocument.load(contractBuffer)
+const pdfDoc = await PDFDocument.create()
+
+// Télécharge la photo du signataire si présente
+let signerPhotoImage = null
+if (existing.photo_path) {
+  const { data: photoFile } = await supabaseAdmin.storage
+    .from('signatures')
+    .download(existing.photo_path)
+
+  if (photoFile) {
+    const photoBuffer = await photoFile.arrayBuffer()
+    const compressedPhoto = await sharp(Buffer.from(photoBuffer))
+      .resize(400, 400, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toBuffer()
+    try {
+      signerPhotoImage = await pdfDoc.embedJpg(compressedPhoto)
+    } catch {
+      signerPhotoImage = null
+    }
+  }
+}
+
+// Intègre la signature PNG
+const signatureImage = await pdfDoc.embedPng(signatureBuffer)
+
+const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+
+const signedAt = new Date()
+const dateStr = signedAt.toLocaleDateString('fr-FR', {
+  weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+  hour: '2-digit', minute: '2-digit',
+  timeZone: 'Europe/Paris'
+})
+
+const { data: photographer } = await supabaseAdmin.auth.admin
+  .getUserById(existing.photographer_id)
+const photographerEmail = photographer?.user?.email ?? ''
+
+// Fonction drawField — prend la page en paramètre
+function drawField(label: string, value: string, y: number, page: any) {
+  page.drawText(label, {
+    x: 50, y,
+    size: 9, font: fontBold,
+    color: rgb(0.5, 0.5, 0.5),
+  })
+  page.drawText(value || '—', {
+    x: 50, y: y - 14,
+    size: 11, font,
+    color: rgb(0.1, 0.1, 0.1),
+  })
+}
+
+// ── PAGE 1 : EN-TÊTE + ATTESTATION ───────────────────────────────
+const page1 = pdfDoc.addPage()
+const { width, height } = page1.getSize()
+
+page1.drawRectangle({
+  x: 0, y: height - 80,
+  width, height: 80,
+  color: rgb(0.06, 0.10, 0.14),
+})
+
+page1.drawText('SIGNA', {
+  x: 50, y: height - 38,
+  size: 18, font: fontBold,
+  color: rgb(0.79, 0.66, 0.30),
+})
+
+page1.drawText('Autorisation de droit à l\'image — Document signé électroniquement', {
+  x: 50, y: height - 58,
+  size: 9, font,
+  color: rgb(0.7, 0.8, 0.9),
+})
+
+let yPos = height - 110
+
+drawField('CONTRAT', contract.name, yPos, page1); yPos -= 40
+drawField('PHOTOGRAPHE', photographerEmail, yPos, page1); yPos -= 55
+
+// Ligne séparatrice
+page1.drawLine({
+  start: { x: 50, y: yPos },
+  end: { x: width - 50, y: yPos },
+  thickness: 0.5,
+  color: rgb(0.85, 0.85, 0.85),
+})
+yPos -= 25
+
+// Phrase d'attestation
+page1.drawText(
+  `${existing.signer_name} atteste avoir signé électroniquement le contrat ci-dessous :`,
+  {
+    x: 50, y: yPos,
+    size: 12, font: fontBold,
+    color: rgb(0.1, 0.1, 0.1),
+    maxWidth: width - 100,
+  }
+)
+
+// Mention légale bas de page 1
+page1.drawLine({
+  start: { x: 50, y: 55 },
+  end: { x: width - 50, y: 55 },
+  thickness: 0.5,
+  color: rgb(0.85, 0.85, 0.85),
+})
+page1.drawText(
+  'Ce document a valeur contractuelle. Généré automatiquement par Signa.',
+  { x: 50, y: 38, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
+)
+page1.drawText(
+  `Référence : ${existing.id}  ·  ${dateStr}`,
+  { x: 50, y: 25, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
+)
+
+// ── PAGES DU CONTRAT ORIGINAL ─────────────────────────────────────
+const copiedPages = await pdfDoc.copyPages(originalPdf, originalPdf.getPageIndices())
+copiedPages.forEach(page => pdfDoc.addPage(page))
+
+// ── DERNIÈRE PAGE : INFOS + SIGNATURE ────────────────────────────
+const lastPage = pdfDoc.addPage()
+const { width: w2, height: h2 } = lastPage.getSize()
+
+lastPage.drawRectangle({
+  x: 0, y: h2 - 80,
+  width: w2, height: 80,
+  color: rgb(0.06, 0.10, 0.14),
+})
+lastPage.drawText('SIGNA', {
+  x: 50, y: h2 - 38,
+  size: 18, font: fontBold,
+  color: rgb(0.79, 0.66, 0.30),
+})
+lastPage.drawText('Informations de signature', {
+  x: 50, y: h2 - 58,
+  size: 9, font,
+  color: rgb(0.7, 0.8, 0.9),
+})
+
+let y2 = h2 - 110
+
+drawField('SIGNATAIRE', existing.signer_name, y2, lastPage); y2 -= 40
+drawField('EMAIL', existing.signer_email, y2, lastPage); y2 -= 40
+if (existing.signer_phone) {
+  drawField('TÉLÉPHONE', existing.signer_phone, y2, lastPage); y2 -= 40
+}
+drawField('DATE DE SIGNATURE', dateStr, y2, lastPage); y2 -= 40
+drawField('ADRESSE IP', existing.ip_address ?? 'non disponible', y2, lastPage); y2 -= 40
+drawField('RÉFÉRENCE', existing.id, y2, lastPage); y2 -= 50
+
+// Ligne séparatrice
+lastPage.drawLine({
+  start: { x: 50, y: y2 },
+  end: { x: w2 - 50, y: y2 },
+  thickness: 0.5,
+  color: rgb(0.85, 0.85, 0.85),
+})
+y2 -= 20
+
+// Photo + Signature côte à côte
+const colWidth = (w2 - 100) / 2
+
+if (signerPhotoImage) {
+  lastPage.drawText('PHOTO DU SIGNATAIRE', {
+    x: 50, y: y2,
+    size: 9, font: fontBold,
+    color: rgb(0.5, 0.5, 0.5),
+  })
+  const photoDims = signerPhotoImage.scaleToFit(colWidth - 20, 120)
+  lastPage.drawImage(signerPhotoImage, {
+    x: 50,
+    y: y2 - 20 - photoDims.height,
+    width: photoDims.width,
+    height: photoDims.height,
+  })
+}
+
+const sigX = signerPhotoImage ? 50 + colWidth + 20 : 50
+
+lastPage.drawText('SIGNATURE MANUSCRITE', {
+  x: sigX, y: y2,
+  size: 9, font: fontBold,
+  color: rgb(0.5, 0.5, 0.5),
+})
+
+const sigDims = signatureImage.scaleToFit(
+  signerPhotoImage ? colWidth - 20 : w2 - 100,
+  120
+)
+
+lastPage.drawImage(signatureImage, {
+  x: sigX,
+  y: y2 - 20 - sigDims.height,
+  width: sigDims.width,
+  height: sigDims.height,
+})
+
+lastPage.drawLine({
+  start: { x: sigX, y: y2 - 20 - sigDims.height - 5 },
+  end: { x: sigX + sigDims.width, y: y2 - 20 - sigDims.height - 5 },
+  thickness: 0.5,
+  color: rgb(0.5, 0.5, 0.5),
+})
+
+// Mention légale bas de dernière page
+lastPage.drawLine({
+  start: { x: 50, y: 55 },
+  end: { x: w2 - 50, y: 55 },
+  thickness: 0.5,
+  color: rgb(0.85, 0.85, 0.85),
+})
+lastPage.drawText(
+  'Ce document a valeur contractuelle. Généré automatiquement par Signa.',
+  { x: 50, y: 38, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
+)
+lastPage.drawText(
+  `Référence : ${existing.id}  ·  ${dateStr}`,
+  { x: 50, y: 25, size: 8, font, color: rgb(0.6, 0.6, 0.6) }
+)
+
+// Génère le PDF final
+const pdfBytes = await pdfDoc.save({
+  useObjectStreams: true,
+  addDefaultPage: false,
+})
+const pdfBuffer = Buffer.from(pdfBytes)
 
     // ─── 3. Upload du PDF signé ──────────────────────────────────────
     const pdfPath = `${id}/contrat_signe_${Date.now()}.pdf`

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Search, Eye, Trash2, Mail, Phone, FileText,
+  Search, Eye, Trash2, Mail, Phone, FileText, WifiOff,
   CheckCircle, Clock, ChevronDown, ChevronUp, Loader2
 } from 'lucide-react'
 import ConfirmModal from '@/components/ui/ConfirmModal'
@@ -16,6 +16,7 @@ interface Signature {
   contract_name: string | null
   contracts: { name: string }[] | null
   pdf_path: string | null
+  signature_mode: string | null 
 }
 
 interface ApiResponse {
@@ -62,6 +63,24 @@ export default function SignaturesList() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [signatureToDelete, setSignatureToDelete] = useState<Signature | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
+const [resendingId, setResendingId] = useState<string | null>(null)
+
+async function handleResendOtp(sig: Signature) {
+  setResendingId(sig.id)
+  try {
+    const res = await fetch(`/api/signatures/${sig.id}/resend-otp`, {
+      method: 'POST',
+      credentials: 'include',
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error)
+    // Feedback visuel — pas de rechargement nécessaire
+  } catch (err: any) {
+    setError(err.message ?? 'Erreur lors du renvoi.')
+  } finally {
+    setResendingId(null)
+  }
+}
 
   const fetchSignatures = useCallback(async () => {
     setLoading(true)
@@ -225,6 +244,17 @@ export default function SignaturesList() {
                       }
                       {sig.status === 'signed' ? 'Signé' : 'En attente'}
                     </span>
+
+
+{sig.signature_mode === 'distance' && (
+  <span
+    className="flex items-center gap-1 text-xs px-2 py-1 rounded-md"
+    style={{ background: 'rgba(201,168,76,0.1)', color: '#C9A84C' }}
+  >
+    <WifiOff className="w-3 h-3" />
+    À distance
+  </span>
+)}
                     {isOpen
                       ? <ChevronUp className="w-4 h-4" style={{ color: '#C9A84C' }} />
                       : <ChevronDown className="w-4 h-4" style={{ color: 'rgba(245,240,232,0.3)' }} />
@@ -271,6 +301,17 @@ export default function SignaturesList() {
                           {loadingPdfId === sig.id ? 'Chargement…' : 'Voir le PDF'}
                         </button>
                       )}
+                      {sig.status === 'pending' && sig.signature_mode === 'distance' && (
+  <button
+    onClick={() => handleResendOtp(sig)}
+    disabled={resendingId === sig.id}
+    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-opacity disabled:opacity-50"
+    style={{ background: 'rgba(201,168,76,0.1)', color: '#C9A84C' }}
+  >
+    <WifiOff className="w-4 h-4" />
+    {resendingId === sig.id ? 'Envoi…' : 'Renvoyer le lien'}
+  </button>
+)}
                       <button
                         onClick={() => setSignatureToDelete(sig)}
                         disabled={deletingId === sig.id}
