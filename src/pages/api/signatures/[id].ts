@@ -387,7 +387,7 @@ page1.drawRectangle({
   color: rgb(0.06, 0.10, 0.14),
 })
 
-page1.drawText('SIGNA', {
+page1.drawText('Crespeau Photo', {
   x: 50, y: height - 38,
   size: 18, font: fontBold,
   color: rgb(0.79, 0.66, 0.30),
@@ -453,7 +453,7 @@ lastPage.drawRectangle({
   width: w2, height: 80,
   color: rgb(0.06, 0.10, 0.14),
 })
-lastPage.drawText('SIGNA', {
+lastPage.drawText('Crespeau Photo', {
   x: 50, y: h2 - 38,
   size: 18, font: fontBold,
   color: rgb(0.79, 0.66, 0.30),
